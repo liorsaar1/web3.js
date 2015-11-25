@@ -8,7 +8,8 @@
    
     var Web3 = require('web3');
     var web3 = new Web3();
-    web3.setProvider(new web3.providers.HttpProvider());
+    var providerUrl = 'http://lior.ide.tmp.ether.camp:8555/sandbox/b676642e625952b563b05636bcd7ec0ace2517a5'
+    web3.setProvider(new web3.providers.HttpProvider(providerUrl));
 
     function watchBalance() {
         var coinbase = web3.eth.coinbase;
