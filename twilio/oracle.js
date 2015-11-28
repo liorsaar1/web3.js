@@ -4,7 +4,7 @@
     //=======================================
     var Web3 = require('web3');
     var web3 = new Web3();
-    var providerUrl = 'http://lior.ide.tmp.ether.camp:8555/sandbox/5c23221f01afdce32f42427138e05e277cd30347'
+    var providerUrl = 'http://lior.ide.tmp.ether.camp:8555/sandbox/c31e4d620888b3b3b2a01a5f4cd934450041a2e1'
     web3.setProvider(new web3.providers.HttpProvider(providerUrl));
     web3.eth.defaultAccount = "0x4ed0c969c46e1240173679183a31cf4d104c232c";
     
@@ -13,32 +13,32 @@
     //=======================================
     var NameReg = require('./namereg');
     var namereg = NameReg.getInstance(web3);
-    namereg.addressOf('Wallet', function(err, address) {
-        var TAG = "namereg.addressOf('Wallet'): ";
-        if (err) {
-            console.log(TAG, "ERROR", err);
-            return;
-        }
-        if (address == 0x0) {
-            console.log(TAG, "NOT FOUND");
-            return;
-        }
-        console.log(TAG, address);
-    });
+    // namereg.addressOf('Wallet', function(err, address) {
+    //     var TAG = "namereg.addressOf('Wallet'): ";
+    //     if (err) {
+    //         console.log(TAG, "ERROR", err);
+    //         return;
+    //     }
+    //     if (address == 0x0) {
+    //         console.log(TAG, "NOT FOUND");
+    //         return;
+    //     }
+    //     console.log(TAG, address);
+    // });
     
-    namereg.addressOf('Oracle', function(err, address) {
-        var TAG = "namereg.addressOf('Oracle'): ";
-        if (err) {
-            console.log(TAG, "ERROR", err);
-            return;
-        }
-        if (address == 0x0) {
-            console.log(TAG, "NOT FOUND");
-            return;
-        }
-        console.log(TAG, address);
-        setOracle(address);
-    });
+    // namereg.addressOf('Oracle', function(err, address) {
+    //     var TAG = "namereg.addressOf('Oracle'): ";
+    //     if (err) {
+    //         console.log(TAG, "ERROR", err);
+    //         return;
+    //     }
+    //     if (address == 0x0) {
+    //         console.log(TAG, "NOT FOUND");
+    //         return;
+    //     }
+    //     console.log(TAG, address);
+    //     setOracle(address);
+    // });
     
     //=======================================
     // Oracle
@@ -46,11 +46,11 @@
     var Oracle = require('./oracleDef');
     var oracleInstance;
     function setOracle(address) {
+        console.log( "setOracle:" + address);
         oracleInstance = Oracle.getInstance(web3, address);
         
+        // watch for Notify
         var oracleNotify = oracleInstance.Notify();
-        
-        // watch for changes
         oracleNotify.watch( function(err, result) {
             var TAG = "oracleNotify.watch: ";
             if (err) {
@@ -60,6 +60,50 @@
             console.log(TAG, "Notify", result.args);
         });
     }
+    
+    //=======================================
+    // Wallet
+    //=======================================
+    var Wallet = require('./walletDef');
+    var walletInstance;
+    function setWallet(address) {
+        console.log( "setWallet:" + address);
+        walletInstance = Wallet.getInstance(web3, address);
+        walletInstacnce.setOracle(oracleInstance);
+    }
+    
+    
+    
+function getAddressOf(contractName) {
+  return new Promise(function(resolve, reject) {
+    namereg.addressOf(contractName, function(err, address) {
+        var TAG = "namereg.addressOf:" + contractName + ":";
+        if (err) {
+            console.log(TAG, "ERROR", err);
+            return reject(Error(err));
+        }
+        if (address == 0x0) {
+            console.log(TAG, "NOT FOUND");
+            return reject(Error("Not Found:" + TAG));
+        }
+        console.log(TAG, address);
+        resolve(address);
+    });
+  });
+}    
+
+getAddressOf('Oracle').then(function(address) {
+    setOracle(address);
+    return getAddressOf('Wallet');
+}, abort).then(function(address) {
+    setWallet(address);
+}, abort);
+    
+
+function abort(error) {
+    console.log( "ABORT", error);
+    process.exit();
+}    
     
 
 //     var Wallet = require('./wallet');
