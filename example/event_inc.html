@@ -6,7 +6,10 @@
 
         var Web3 = require('web3');
         var web3 = new Web3();
-        web3.setProvider(new web3.providers.HttpProvider('http://localhost:8545'));
+    var providerUrl = 'http://lior.ide.tmp.ether.camp:8555/sandbox/e5a1f68b102d084f46e5b74b3c9f0b51d9f4724d'
+    web3.setProvider(new web3.providers.HttpProvider(providerUrl));
+    web3.eth.defaultAccount = "0x4ed0c969c46e1240173679183a31cf4d104c232c";
+
 
         var source = "" +
         "contract Contract { " +
@@ -23,8 +26,9 @@
 
         var compiled = web3.eth.compile.solidity(source);
         var code = compiled.Contract.code;
-        var abi = compiled.Contract.info.abiDefinition;
-
+//    var abi = compiled.Contract.info.abiDefinition;
+    var abi = compiled.Contract.info.abiDifinition;
+    
         var address;
         var contract;
         var inc;
@@ -35,7 +39,8 @@
     
         var createContract = function () {
             // let's assume that we have a private key to coinbase ;)
-            web3.eth.defaultAccount = web3.eth.coinbase;
+//            web3.eth.defaultAccount = web3.eth.coinbase;
+    web3.eth.defaultAccount = "0x4ed0c969c46e1240173679183a31cf4d104c232c";
             
             document.getElementById('create').style.visibility = 'hidden';
             document.getElementById('status').innerText = "transaction sent, waiting for confirmation";
@@ -54,6 +59,13 @@
                     document.getElementById('call').style.visibility = 'visible';
 
                     inc = contract.Incremented({odd: true}, update);
+                    inc.watch(function(error, result){
+            if (error) {
+                console.log(error);
+                return;
+            }
+            console.log(result);
+        });
                 }
             });
         };
