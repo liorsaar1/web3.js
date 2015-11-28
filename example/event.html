@@ -2,7 +2,6 @@
 <html>
 
 <head>
-<script type="text/javascript" src="https://static.twilio.com/libs/twiliojs/1.2/twilio.min.js"></script>
 <script type="text/javascript" src="../dist/web3.js"></script>
 <script type="text/javascript" src="js/namereg.js"></script>
 <script type="text/javascript">
@@ -83,15 +82,13 @@ var walletAbi = [
 
     var Web3 = require('web3');
     var web3 = new Web3();
-    var providerUrl = 'http://lior.ide.tmp.ether.camp:8555/sandbox/65eb9446fa6684f469b0e177c2b3f221b38c5599'
+    var providerUrl = 'http://lior.ide.tmp.ether.camp:8555/sandbox/1205df90136df791b1d7d2c21bb20efec72f9bb0'
     web3.setProvider(new web3.providers.HttpProvider(providerUrl));
     web3.eth.defaultAccount = "0x4ed0c969c46e1240173679183a31cf4d104c232c";
     
     var nameReg = getNameReg(web3);
     var WalletContract = web3.eth.contract(walletAbi);
     var walletInstance;
-    
-//    var Twilio = require('twilio');
     
     function onload() {
         console.log("loaded");
@@ -119,14 +116,14 @@ var walletAbi = [
             console.log(result);
         });
         
-        // var events = walletInstance.allEvents();
-        // events.watch(function(error, result){
-        //     if (error) {
-        //         console.log(error);
-        //         return;
-        //     }
-        //     console.log(result);
-        // });
+    //     var events = walletInstance.allEvents();
+    //     events.watch(function(error, result){
+    //         if (error) {
+    //             console.log(error);
+    //             return;
+    //         }
+    //         console.log(result);
+    //     });
         
     }
     
