@@ -4,7 +4,7 @@
     //=======================================
     var Web3 = require('web3');
     var web3 = new Web3();
-    var providerUrl = 'http://lior.ide.tmp.ether.camp:8555/sandbox/c31e4d620888b3b3b2a01a5f4cd934450041a2e1'
+    var providerUrl = 'http://lior.ide.tmp.ether.camp:8555/sandbox/2607070ae2a42ba2b04c5511ec5a3cc51d63dc88'
     web3.setProvider(new web3.providers.HttpProvider(providerUrl));
     web3.eth.defaultAccount = "0x4ed0c969c46e1240173679183a31cf4d104c232c";
     
@@ -13,44 +13,19 @@
     //=======================================
     var NameReg = require('./namereg');
     var namereg = NameReg.getInstance(web3);
-    // namereg.addressOf('Wallet', function(err, address) {
-    //     var TAG = "namereg.addressOf('Wallet'): ";
-    //     if (err) {
-    //         console.log(TAG, "ERROR", err);
-    //         return;
-    //     }
-    //     if (address == 0x0) {
-    //         console.log(TAG, "NOT FOUND");
-    //         return;
-    //     }
-    //     console.log(TAG, address);
-    // });
-    
-    // namereg.addressOf('Oracle', function(err, address) {
-    //     var TAG = "namereg.addressOf('Oracle'): ";
-    //     if (err) {
-    //         console.log(TAG, "ERROR", err);
-    //         return;
-    //     }
-    //     if (address == 0x0) {
-    //         console.log(TAG, "NOT FOUND");
-    //         return;
-    //     }
-    //     console.log(TAG, address);
-    //     setOracle(address);
-    // });
-    
+
     //=======================================
     // Oracle
     //=======================================
     var Oracle = require('./oracleDef');
     var oracleInstance;
+    var oracleNotify;
     function setOracle(address) {
         console.log( "setOracle:" + address);
         oracleInstance = Oracle.getInstance(web3, address);
         
         // watch for Notify
-        var oracleNotify = oracleInstance.Notify();
+        oracleNotify = oracleInstance.Notify();
         oracleNotify.watch( function(err, result) {
             var TAG = "oracleNotify.watch: ";
             if (err) {
@@ -66,10 +41,26 @@
     //=======================================
     var Wallet = require('./walletDef');
     var walletInstance;
+    var walletText;
     function setWallet(address) {
-        console.log( "setWallet:" + address);
+        console.log( "setWallet:", address);
         walletInstance = Wallet.getInstance(web3, address);
-        walletInstacnce.setOracle(oracleInstance);
+        
+        // watch for Text
+        walletText = walletInstance.Text();
+        walletText.watch( function(err, result) {
+            var TAG = "Text.watch: ";
+            if (err) {
+                console.log(TAG, "ERROR", err);
+                return;
+            }
+            console.log(TAG, "Text", result.args);
+        });
+        
+        //console.log( "setWallet:walletInstance", walletInstance);
+        walletInstance.setOracle(address);
+        // walletInstance.setPhone("1234");
+//        walletInstance.spend(5678);
     }
     
     

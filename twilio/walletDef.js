@@ -7,7 +7,8 @@ module.exports = {
   },
 };
 
-var walletAbi = [
+var walletAbi = 
+[
   {
     "constant": false,
     "inputs": [],
@@ -29,6 +30,18 @@ var walletAbi = [
       }
     ],
     "name": "spend",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "oracleAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setOracle",
     "outputs": [],
     "type": "function"
   },
@@ -66,16 +79,12 @@ var walletAbi = [
     "inputs": [
       {
         "indexed": false,
-        "name": "phone",
+        "name": "text",
         "type": "string"
-      },
-      {
-        "indexed": false,
-        "name": "value",
-        "type": "uint256"
       }
     ],
-    "name": "Notify",
+    "name": "Text",
     "type": "event"
   }
-];
+]
+;
