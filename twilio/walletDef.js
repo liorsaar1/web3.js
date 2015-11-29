@@ -83,7 +83,7 @@ var walletAbi =
         "type": "string"
       }
     ],
-    "name": "Text",
+    "name": "Feedback",
     "type": "event"
   }
 ]

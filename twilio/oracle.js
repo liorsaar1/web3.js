@@ -4,7 +4,7 @@
     //=======================================
     var Web3 = require('web3');
     var web3 = new Web3();
-    var providerUrl = 'http://lior.ide.tmp.ether.camp:8555/sandbox/2607070ae2a42ba2b04c5511ec5a3cc51d63dc88'
+    var providerUrl = 'http://lior.ide.tmp.ether.camp:8555/sandbox/d8304172825dc035304d03ef6bbb7320c1d88241'
     web3.setProvider(new web3.providers.HttpProvider(providerUrl));
     web3.eth.defaultAccount = "0x4ed0c969c46e1240173679183a31cf4d104c232c";
     
@@ -41,60 +41,65 @@
     //=======================================
     var Wallet = require('./walletDef');
     var walletInstance;
-    var walletText;
+    var walletFeedback;
     function setWallet(address) {
         console.log( "setWallet:", address);
         walletInstance = Wallet.getInstance(web3, address);
         
         // watch for Text
-        walletText = walletInstance.Text();
-        walletText.watch( function(err, result) {
-            var TAG = "Text.watch: ";
+        walletFeedback = walletInstance.Feedback();
+        walletFeedback.watch( function(err, result) {
+            var TAG = "Feedback.watch: ";
             if (err) {
                 console.log(TAG, "ERROR", err);
                 return;
             }
-            console.log(TAG, "Text", result.args);
+            console.log(TAG, "Feedback", result.args);
         });
         
-        //console.log( "setWallet:walletInstance", walletInstance);
-        walletInstance.setOracle(address);
-        // walletInstance.setPhone("1234");
-//        walletInstance.spend(5678);
+        console.log( "setWallet: setOracle", oracleInstance.address);
+        walletInstance.setOracle(oracleInstance.address, function(err, result){
+            console.log(err, result);
+        });
+        // walletInstance.setPhone("415-666-7777");
+        // walletInstance.spend(1627);
     }
-    
-    
-    
-function getAddressOf(contractName) {
-  return new Promise(function(resolve, reject) {
-    namereg.addressOf(contractName, function(err, address) {
-        var TAG = "namereg.addressOf:" + contractName + ":";
-        if (err) {
-            console.log(TAG, "ERROR", err);
-            return reject(Error(err));
-        }
-        if (address == 0x0) {
-            console.log(TAG, "NOT FOUND");
-            return reject(Error("Not Found:" + TAG));
-        }
-        console.log(TAG, address);
-        resolve(address);
-    });
-  });
-}    
 
-getAddressOf('Oracle').then(function(address) {
-    setOracle(address);
-    return getAddressOf('Wallet');
-}, abort).then(function(address) {
-    setWallet(address);
-}, abort);
-    
+    function getAddressOf(contractName) {
+      return new Promise(function(resolve, reject) {
+        namereg.addressOf(contractName, function(err, address) {
+            var TAG = "namereg.addressOf:" + contractName + ":";
+            if (err) {
+                console.log(TAG, "ERROR", err);
+                return reject(Error(err));
+            }
+            if (address == 0x0) {
+                console.log(TAG, "NOT FOUND");
+                return reject(Error("Not Found:" + TAG));
+            }
+            console.log(TAG, address);
+            resolve(address);
+        });
+      });
+    }
 
-function abort(error) {
-    console.log( "ABORT", error);
-    process.exit();
-}    
+
+    //===============================================
+    // setup
+    //===============================================
+    
+    getAddressOf('Oracle').then(function(address) {
+        setOracle(address);
+        return getAddressOf('Wallet');
+    }, abort).then(function(address) {
+        setWallet(address);
+    }, abort);
+        
+    
+    function abort(error) {
+        console.log( "ABORT", error);
+        process.exit();
+    }    
     
 
 //     var Wallet = require('./wallet');
